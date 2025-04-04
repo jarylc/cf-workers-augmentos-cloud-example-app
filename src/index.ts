@@ -11,8 +11,14 @@
  * Learn more at https://developers.cloudflare.com/workers/
  */
 
+import { Handler } from './handler';
+
 export default {
-	async fetch(request, env, ctx): Promise<Response> {
-		return new Response('Hello World!');
-	},
-} satisfies ExportedHandler<Env>;
+	async fetch(request: Request, env: Env) {
+		let id = env.HANDLER.idFromName("");
+		let obj = env.HANDLER.get(id);
+		return obj.fetch(request)
+	}
+}
+
+export { Handler } from './handler';

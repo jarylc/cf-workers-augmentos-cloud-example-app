@@ -1,0 +1,6 @@
+{
+	"name": "CF Workers Example App",
+	"description": "Example app deployed on Cloudflare Workers.",
+	"version": "1.0.0",
+	"settings": []
+}

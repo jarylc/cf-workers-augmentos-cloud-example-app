@@ -54,13 +54,44 @@ export class Handler extends DurableObject {
 
 	async onSession(session: TpaSession, sessionId: string, userId: string): Promise<void> {
 		session.events.onHeadPosition((data) => {
-			console.log('onHeadPosition');
-			session.layouts.showTextWall("Head position changed " + Math.round(Math.random() * 100));
+			console.log('onHeadPosition', data);
+			session.layouts.showTextWall("Head position changed " + Math.round(Math.random() * 100), {
+				durationMs: 3000
+			});
+			session.layouts
+		})
+
+		session.events.onButtonPress((data) => {
+			console.log('onButtonPress', data);
+			session.layouts.showTextWall("Button pressed " + Math.round(Math.random() * 100), {
+				durationMs: 3000
+			});
 		})
 
 		session.events.onGlassesBattery((data) => {
 			console.log('onGlassesBattery', data)
+			session.layouts.showTextWall("Glasses battery: " + data.level, {
+				durationMs: 3000
+			});
 		});
+
+		session.events.onTranscription((data) => {
+			console.log('onTranscription', data)
+			if (!data.isFinal) return
+			session.layouts.showTextWall(data.text, {
+				durationMs: 3000
+			});
+		})
+
+		session.events.onVoiceActivity((data) => {
+			console.log('onVoiceActivity', data)
+		})
+
+		session.events.onPhoneNotifications((data) => {
+			session.layouts.showTextWall("Phone notifications " + Math.round(Math.random() * 100), {
+				durationMs: 3000
+			});
+		})
 
 		session.events.onError((error) => {
 			console.error('Error:', error);

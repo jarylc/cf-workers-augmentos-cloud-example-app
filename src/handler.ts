@@ -10,15 +10,30 @@ import {
 } from './augmentos';
 
 export class Handler extends DurableObject {
+	private storage: DurableObjectStorage;
+
 	activeSessions = new Map<string, TpaSession>();
 
 	router = AutoRouter()
+
 	async fetch(request: Request): Promise<Response> {
+
+		let currentAlarm = await this.storage.getAlarm();
+		if (currentAlarm == null) {
+			await this.storage.setAlarm(Date.now() + 5000);
+		}
+
 		return this.router.fetch(request)
+	}
+	// keep durable object alive if activeSessions > 0
+	async alarm() {
+		if (this.activeSessions.size > 0)
+			await this.storage.setAlarm(Date.now() + 5000)
 	}
 
 	constructor(state: DurableObjectState, env: Env) {
 		super(state, env);
+		this.storage = state.storage;
 
 		this.router
 			.get('/health', async (_) => {
